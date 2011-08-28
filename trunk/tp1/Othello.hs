@@ -24,3 +24,27 @@ arbolDeJugadas j = Nodo ([], j) $ zipWith agmov movs hijos
         movs = map fst movsJuegos
         hijos = map (arbolDeJugadas . snd) movsJuegos
 
+-- Ejercicio 7
+
+jugar :: Jugada -> Juego -> Maybe Juego
+jugar Paso (J c t) = Just (J (invertir' c) t)
+jugar (M p) (J c t) = if (adentro p) && (vacia p t) && (rodee p t c) then Just (J (invertir' c) (realizarJugada p t c)) else Nothing
+
+vacia:: Posicion -> Tablero -> Bool
+vacia p t = (contenido p t == Nothing)
+
+rodee::Posicion -> Tablero -> Color -> Bool
+rodee p t c = not ((posicionesAInvertir p (poner p (invertir' c) t))  == [])
+
+realizarJugada:: Posicion -> Tablero -> Color -> Tablero
+realizarJugada p t c = (invertirTodas (posicionesAInvertir p (poner p (invertir' c) t)) (poner p (invertir' c) t))
+
+-- Ejercicio 8
+
+jugadasPosibles :: Juego -> [(Jugada,Juego)]
+jugadasPosibles j = if ( genericLength (posiblesBuenas j) == 0) then [(Paso,j)] else (posiblesBuenas j)
+
+posiblesBuenas :: Juego -> [(Jugada,Juego)]
+posiblesBuenas j = [ ((M (c1,f1)),fromJust (jugar (M (c1,f1)) j)) | c1<-['a'..'h'], f1<-[1..8], not ( isNothing (jugar (M (c1,f1)) j) )]
+
+-- Ejercicio 9
