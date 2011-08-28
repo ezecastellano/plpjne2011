@@ -39,7 +39,6 @@ isInicial (c,f) = if ((c,f) == ('d',4) || (c,f) == ('e',5)) then Just Negro else
 contenido::Posicion -> Tablero -> Maybe Color
 contenido p2 (T f) = f p2
 
-
 poner::Posicion -> Color -> Tablero -> Tablero
 poner p c (T f) = T (ponerAux p c f)
 
@@ -79,9 +78,11 @@ invertirTodas xs (T f) =  T (\p -> if (pertenece p xs) then invertir (f p) else 
 invertir:: Maybe Color -> Maybe Color
 invertir c = if c == Nothing then Nothing else if c == Just Blanco then Just Negro else Just Blanco
 
+invertir':: Color -> Color
+invertir' c = if c == Blanco then Negro else Blanco
+
 pertenece:: Eq a => a -> [a] -> Bool
 pertenece y xs = not ([x | x<-xs, y==x] == [])
-
 
 -- BonusTrack
 
