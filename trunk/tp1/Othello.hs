@@ -48,3 +48,17 @@ posiblesBuenas :: Juego -> [(Jugada,Juego)]
 posiblesBuenas j = [ ((M (c1,f1)),fromJust (jugar (M (c1,f1)) j)) | c1<-['a'..'h'], f1<-[1..8], not ( isNothing (jugar (M (c1,f1)) j) )]
 
 -- Ejercicio 9
+
+foldArbol :: (a->[b]->b) -> Arbol a -> b
+foldArbol f (Nodo a ts) = f a (map (foldArbol f) ts)
+
+-- Ejercicio 10 (Este ejercicio está mal porque nos dice que usemos foldArbol... esto se parece a un fold  "Nodo a (map (\x ->podar' x (n-1)) xs)" )
+
+podar :: Int -> Arbol a -> Arbol a
+podar n a = podar' a (n-1)
+
+-- foldArbol (\x rs -> podar' a (n-1)) a
+
+podar' :: Arbol a -> Int -> Arbol a
+podar' (Nodo a xs) n  =  if n > 0 && not( genericLength xs == 0) then Nodo a (map (\x ->podar' x (n-1)) xs)  else (Nodo a [])
+ 
