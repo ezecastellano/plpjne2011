@@ -23,7 +23,35 @@ testsTablero = test [
 	_N ~=? fromJust (contenido e_5 tableroInicial),
 	_B ~=? fromJust (contenido e_4 tableroInicial),
 	_B ~=? fromJust (contenido d_5 tableroInicial),
-	Nothing ~=? contenido a_1 tableroInicial
+	Nothing ~=? contenido a_1 tableroInicial,
+	"ejercicio1" ~:testsEjercicio1,
+	"ejercicio2" ~:testsEjercicio2,
+	"ejercicio3" ~:testsEjercicio3,
+	"ejercicio4" ~:testsEjercicio4,
+	"ejercicio5" ~:testsEjercicio5
+	]
+	
+testsEjercicio1 = test [
+	[[] ~~? filter (\a -> not (contenido a vacio == Nothing) ) listaPosiciones],
+	[[d_4, e_5, e_4, d_5] ~~? filter (\a -> not (contenido a tableroInicial == Nothing) ) listaPosiciones]
+	]
+	
+testsEjercicio2 = test [
+	_N ~=? fromJust (contenido d_6 (poner d_6 _N tableroInicial))
+	]
+	
+testsEjercicio3 = test [
+	d_1 ~=? desplazarColumna 1 ('c', 1),
+	c_2 ~=? desplazarFila (-2) ('c', 4) 
+	]
+	
+testsEjercicio4 = test [
+	[f_5, f_6, f_7, f_8] ~~? generar ('f', 5) ( desplazarFila 1),
+	[f_5, g_6, h_7] ~~? generar ('f', 5) ((desplazarColumna 1).( desplazarFila 1))
+	]
+	
+testsEjercicio5 = test [
+	[d_5] ~~?  posicionesAInvertir d_6 tableroInicial
 	]
 
 -- idem ~=? pero sin importar el orden
@@ -113,3 +141,5 @@ e_8 = ('e',8::Int)
 f_8 = ('f',8::Int)
 g_8 = ('g',8::Int)
 h_8 = ('h',8::Int)
+
+listaPosiciones = [a_1 ,b_1 ,c_1 ,d_1 ,e_1 ,f_1 ,g_1 ,h_1 ,a_2 ,b_2 ,c_2 ,d_2 ,e_2 ,f_2 ,g_2 ,h_2 ,a_3 ,b_3 ,c_3 ,d_3 ,e_3 ,f_3 ,g_3 ,h_3 ,b_4 ,c_4 ,d_4 ,e_4 ,f_4 ,g_4 ,h_4 ,a_5 ,b_5 ,c_5 ,d_5 ,e_5 ,f_5 ,g_5 ,h_5 ,a_6 ,b_6 ,c_6 ,d_6 ,e_6 ,f_6 ,g_6 ,h_6 ,a_7 ,b_7 ,c_7 ,d_7 ,e_7 ,f_7 ,g_7 ,h_7 ,a_8 ,b_8 ,c_8 ,d_8 ,e_8 ,f_8 ,g_8 ,h_8 ]
