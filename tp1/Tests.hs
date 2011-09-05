@@ -51,7 +51,7 @@ testsEjercicio4 = test [
 	]
 	
 testsEjercicio5 = test [
-	[d_5] ~~?  posicionesAInvertir d_6 tableroInicial
+	[d_5] ~~?  posicionesAInvertir d_6 (poner d_6 Negro tableroInicial)
 	]
 
 -- idem ~=? pero sin importar el orden
