@@ -55,36 +55,66 @@ desplazarColumna :: Int -> Posicion -> Posicion
 desplazarColumna n (c,f) = (chr(ord(c)+n),f)
 
 -- Ejercicio 4
-
+--Devuelve la lista de posiciones hasta el extremo del tablero desde la posicion dada, avanzando con la funcion provista. Si la posición inicial no pertenece al tablero devuelve la lista vacía.
 generar :: Posicion -> (Posicion -> Posicion ) -> [ Posicion ]
 generar p d = [x | x<-(takeWhile (\p -> adentro p)(iterate d p) )]
 
+-- Verdadera si la posición es una posicion valida del tablero.
 adentro::Posicion->Bool
-adentro (c,f) = not ([(c1,f1) | c1<-['a'..'h'], f1<-[1..8], (c1,f1)==(c,f)] == [])
+adentro (c,f) = oc >= ord('a') && oc <= ord('h') && f >= 1 && f <= 8
+	where oc = ord(c)
 
 -- Ejercicio 5
 
 posicionesAInvertir :: Posicion -> Tablero -> [ Posicion ]
-posicionesAInvertir p0 (T f) = [z | s <- [1,-1], z <- (takeWhile (\x -> criteria p0 x f) (generar p0 (\x -> desplazarFila s x))), not (z == p0)] ++ [z | s <- [1,-1], z <- (takeWhile (\x -> criteria p0 x f) (generar p0 (\x -> desplazarColumna s x))), not (z == p0)]
+posicionesAInvertir p0 t = (posicionesAInvertirDesp p0 t desplazarFila) ++ (posicionesAInvertirDesp p0 t desplazarColumna)
 
-criteria:: Posicion -> Posicion -> (Posicion -> Maybe Color) -> Bool
-criteria p0 p f = (adentro p) && ((f p0) == invertir (f p) || p==p0) 
+-- Recibe una función de desplazamiento y devuelve todas las posibles casillas alcanzables utilizando ese desplazamiento con cualquier distancia.
+posicionesAInvertirDesp :: Posicion -> Tablero -> (Int -> Posicion -> Posicion) -> [Posicion]
+posicionesAInvertirDesp p0 (T f) next = [z | s <-[-1,1], z <- (takeWhile (criteria p0 f) (generar (next s p0) (next s)))]
+
+--Recibe una posicion dentro del tablero, devuelve false cuando recibe una de su mismo color, error si está vacia ella o la otra
+criteria:: Posicion -> (Posicion -> Maybe Color) -> Posicion -> Bool
+criteria p0 f p | f p0 == Nothing = error "La casilla debe tener una ficha valida"
+		| f p  == Nothing = False
+		| otherwise 	  = (f p0) == invertir (f p)
 
 -- Ejercicio 6
 
 invertirTodas :: [ Posicion ] -> Tablero -> Tablero
-invertirTodas xs (T f) =  T (\p -> if (pertenece p xs) then invertir (f p) else (f p))
+invertirTodas xs (T f) =  T (\p -> if (elem p xs) then invertir (f p) else (f p))
 
+-- El enunciado dice: Asumir que en todas las posiciones hay un ficha. Por lo que debe haber un Just color.
 invertir:: Maybe Color -> Maybe Color
-invertir c = if c == Nothing then Nothing else if c == Just Blanco then Just Negro else Just Blanco
+invertir c = case c of 
+		Nothing -> error "Nothing no es inversible"
+	   	Just color -> Just (invertir' color) 
 
+--Dado un color lo invierte.
 invertir':: Color -> Color
-invertir' c = if c == Blanco then Negro else Blanco
+invertir' Blanco = Negro
+invertir' Negro	= Blanco
 
-pertenece:: Eq a => a -> [a] -> Bool
-pertenece y xs = not ([x | x<-xs, y==x] == [])
 
 -- BonusTrack
+-- ESTO ESTA MAL, devuelve si existe al menos un casillero vacio
+--isVacio::Tablero -> Bool
+--isVacio t = not ([(c,f) | c<-['a'..'h'], f<-[1..8], (contenido (c,f) t) == Nothing ] == []) 
 
-isVacio::Tablero -> Bool
-isVacio t = not ([(c,f) | c<-['a'..'h'], f<-[1..8], (contenido (c,f) t) == Nothing ] == []) 
+-- AUXILIARES
+
+posiciones :: [Posicion]
+posiciones = [ (x,y) | x <- ['a'..'h'], y <- [1..8]]
+
+
+-- devuelve que color tiene más fichas, utilizado en "ganador" de Othelo
+quienTieneMas :: Tablero -> Maybe Color
+quienTieneMas t	| fichasBlancas < fichasNegras = Just Blanco
+		| fichasNegras > fichasBlancas = Just Negro
+		| otherwise 		       = Nothing
+	where 	fichasBlancas = cuantasFichas t Blanco
+		fichasNegras  = cuantasFichas t Negro
+
+--Devuelve cuantas fichas hay de un color
+cuantasFichas :: Tablero -> Color -> Int
+cuantasFichas (T f) c = sum [1 | pos <- posiciones , (f pos) == Just c]
