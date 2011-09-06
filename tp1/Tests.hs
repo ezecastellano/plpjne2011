@@ -8,7 +8,8 @@ t = runTestTT allTests
 
 allTests = test [ 
 	"triviales" ~: testsTriviales,
-	"tablero" ~: testsTablero
+	"tablero" ~: testsTablero,
+	"othello"  ~: testsOthello
 	]
 
 testsTriviales = test [
@@ -30,6 +31,11 @@ testsTablero = test [
 	"ejercicio4" ~:testsEjercicio4,
 	"ejercicio5" ~:testsEjercicio5,
 	"ejercicio6" ~:testsEjercicio6
+	]
+	
+testsOthello = test [
+	"ejercicio7" ~:testsEjercicio7,
+	"ejercicio8" ~:testsEjercicio8
 	]
 	
 testsEjercicio1 = test [
@@ -67,7 +73,16 @@ testsEjercicio6 = test [
 	True ~=? todasColor (Just Blanco) (invertirTodas [d_4,e_5] tableroInicial)
 	]
 	
+testsEjercicio7 = test [
+	Just (J Blanco tableroInicial) ~=? jugar Paso inicial,
+	Nothing ~=? jugar (M ('a',9::Int)) inicial,
+	Nothing ~=? jugar (M d_5) inicial,
+	Nothing ~=? jugar (M c_4) inicial,  -- creo que esto no pasa por el bug del ej5
+	Just (J Blanco (poner c_5 Negro (poner d_5 Negro tableroInicial))) ~=? jugar (M c_5) inicial
+	]
 
+testsEjercicio8 = test [
+	]
 -- idem ~=? pero sin importar el orden
 (~~?) :: (Ord a, Eq a, Show a) => [a] -> [a] -> Test
 expected ~~? actual = (sort expected) ~=? (sort actual)
@@ -162,3 +177,7 @@ tableroEjemplo = (poner d_1 Blanco (poner f_2 Negro (poner e_2 Negro (poner d_2 
 --auxiliares
 todasColor :: Maybe Color -> Tablero -> Bool
 todasColor c (T f)= all(\x -> contenido x(T f) ==  c || contenido x (T f) == Nothing ) posiciones
+
+
+inicial :: Juego
+inicial = J Negro tableroInicial

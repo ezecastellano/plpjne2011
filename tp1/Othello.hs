@@ -6,6 +6,10 @@ import Char
 import List
 
 data Juego = J Color Tablero
+
+instance Eq Juego where
+   (J c1 t1) == (J c2 t2) = (c1 == c2) && (t1 == t2)
+   
 data Jugada = M Posicion | Paso
   deriving (Show, Eq)
 
@@ -40,11 +44,11 @@ vacia p t = (contenido p t == Nothing)
 
 --Chequea que el color c en el tablero t rodee alguna ficha invertida poniendo en la posicion c
 rodee::Posicion -> Tablero -> Color -> Bool
-rodee p t c = not (null (posicionesAInvertir p (poner p (invertir' c) t))) --no entiendo pq invertis a c.
+rodee p t c = not (null (posicionesAInvertir p (poner p c t)))
 
 --Devuelve un tablero con una jugada realizada 
 realizarJugada:: Posicion -> Tablero -> Color -> Tablero
-realizarJugada p t c = invertirTodas (posicionesAInvertir p (poner p (invertir' c) t)) (poner p (invertir' c) t) --otra vez no entiendo por que invertis a c
+realizarJugada p t c = invertirTodas (posicionesAInvertir p (poner p c t)) (poner p c t)
 
 -- Ejercicio 8
 
@@ -102,5 +106,6 @@ ganador (J j t) | terminoJuego (J j t) = quienTieneMas t
 -- Ejercicio 13
 --valuacionOthelo :: Valuacion
 --valuacionOthelo 
+
 
 

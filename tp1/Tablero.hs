@@ -6,6 +6,9 @@ import Maybe
 data Color = Blanco | Negro deriving (Show, Eq, Ord)
 type Posicion = (Char, Int) 
 data Tablero = T (Posicion -> Maybe Color)
+instance Eq Tablero where
+   T f1 == T f2 = all(\x -> contenido x(T f1) == contenido x(T f2) ) posiciones
+
 
 instance Show Tablero where
   show (T tablero) = 
