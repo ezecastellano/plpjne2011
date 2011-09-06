@@ -67,11 +67,15 @@ adentro (c,f) = oc >= ord('a') && oc <= ord('h') && f >= 1 && f <= 8
 -- Ejercicio 5
 
 posicionesAInvertir :: Posicion -> Tablero -> [ Posicion ]
-posicionesAInvertir p0 t = (posicionesAInvertirDesp p0 t desplazarFila) ++ (posicionesAInvertirDesp p0 t desplazarColumna)
+posicionesAInvertir p0 t = (posicionesAInvertirDesp p0 t desplazarFila) ++ (posicionesAInvertirDesp p0 t desplazarColumna) ++ (posicionesAInvertirEnDiagonales p0 t )
 
 -- Recibe una función de desplazamiento y devuelve todas las posibles casillas alcanzables utilizando ese desplazamiento con cualquier distancia.
 posicionesAInvertirDesp :: Posicion -> Tablero -> (Int -> Posicion -> Posicion) -> [Posicion]
 posicionesAInvertirDesp p0 (T f) next = [z | s <-[-1,1], z <- (takeWhile (criteria p0 f) (generar (next s p0) (next s)))]
+
+-- Similar a la anterior pero genera las posiciones en las diagonales
+posicionesAInvertirEnDiagonales :: Posicion -> Tablero -> [Posicion]
+posicionesAInvertirEnDiagonales p0 (T f)= [z | s <-[-1,1], t <- [-1, 1], z <- (takeWhile (criteria p0 f) (generar (((desplazarColumna s).( desplazarFila t)) p0) ((desplazarColumna s).( desplazarFila t))))]
 
 --Recibe una posicion dentro del tablero, devuelve false cuando recibe una de su mismo color, error si está vacia ella o la otra
 criteria:: Posicion -> (Posicion -> Maybe Color) -> Posicion -> Bool

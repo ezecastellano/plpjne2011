@@ -32,8 +32,8 @@ testsTablero = test [
 	]
 	
 testsEjercicio1 = test [
-	[[] ~~? filter (\a -> not (contenido a vacio == Nothing) ) listaPosiciones],
-	[[d_4, e_5, e_4, d_5] ~~? filter (\a -> not (contenido a tableroInicial == Nothing) ) listaPosiciones]
+	[[] ~~? filter (\a -> not (contenido a vacio == Nothing) ) posiciones],
+	[[d_4, e_5, e_4, d_5] ~~? filter (\a -> not (contenido a tableroInicial == Nothing) ) posiciones]
 	]
 	
 testsEjercicio2 = test [
@@ -51,7 +51,12 @@ testsEjercicio4 = test [
 	]
 	
 testsEjercicio5 = test [
-	[d_5] ~~?  posicionesAInvertir d_6 (poner d_6 Negro tableroInicial)
+	[d_5] ~~?  posicionesAInvertir d_6 (poner d_6 Negro tableroInicial),
+	[e_4] ~~? posicionesAInvertir f_3 (poner f_3 Negro(poner d_6 Negro (poner d_5 Negro tableroInicial))),
+	[d_4, e_5] ~~? posicionesAInvertir f_6 (poner f_6 Blanco (poner c_3 Blanco tableroInicial)),
+	[g_4] ~~? posicionesAInvertir h_4 (poner h_4 Negro (poner g_4 Blanco (poner f_4 Negro tableroInicial))),
+	[d_4] ~~? posicionesAInvertir c_4 (poner c_4 Blanco (poner h_4 Negro (poner g_4 Blanco (poner f_4 Negro tableroInicial)))),
+	[b_7] ~~? posicionesAInvertir a_8 (poner a_8 Blanco (poner b_7 Negro (poner c_6 Blanco (poner d_5 Negro tableroInicial))))
 	]
 
 -- idem ~=? pero sin importar el orden
@@ -141,5 +146,3 @@ e_8 = ('e',8::Int)
 f_8 = ('f',8::Int)
 g_8 = ('g',8::Int)
 h_8 = ('h',8::Int)
-
-listaPosiciones = [a_1 ,b_1 ,c_1 ,d_1 ,e_1 ,f_1 ,g_1 ,h_1 ,a_2 ,b_2 ,c_2 ,d_2 ,e_2 ,f_2 ,g_2 ,h_2 ,a_3 ,b_3 ,c_3 ,d_3 ,e_3 ,f_3 ,g_3 ,h_3 ,b_4 ,c_4 ,d_4 ,e_4 ,f_4 ,g_4 ,h_4 ,a_5 ,b_5 ,c_5 ,d_5 ,e_5 ,f_5 ,g_5 ,h_5 ,a_6 ,b_6 ,c_6 ,d_6 ,e_6 ,f_6 ,g_6 ,h_6 ,a_7 ,b_7 ,c_7 ,d_7 ,e_7 ,f_7 ,g_7 ,h_7 ,a_8 ,b_8 ,c_8 ,d_8 ,e_8 ,f_8 ,g_8 ,h_8 ]
