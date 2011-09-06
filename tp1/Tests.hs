@@ -28,7 +28,8 @@ testsTablero = test [
 	"ejercicio2" ~:testsEjercicio2,
 	"ejercicio3" ~:testsEjercicio3,
 	"ejercicio4" ~:testsEjercicio4,
-	"ejercicio5" ~:testsEjercicio5
+	"ejercicio5" ~:testsEjercicio5,
+	"ejercicio6" ~:testsEjercicio6
 	]
 	
 testsEjercicio1 = test [
@@ -56,8 +57,15 @@ testsEjercicio5 = test [
 	[d_4, e_5] ~~? posicionesAInvertir f_6 (poner f_6 Blanco (poner c_3 Blanco tableroInicial)),
 	[g_4] ~~? posicionesAInvertir h_4 (poner h_4 Negro (poner g_4 Blanco (poner f_4 Negro tableroInicial))),
 	[d_4] ~~? posicionesAInvertir c_4 (poner c_4 Blanco (poner h_4 Negro (poner g_4 Blanco (poner f_4 Negro tableroInicial)))),
-	[b_7] ~~? posicionesAInvertir a_8 (poner a_8 Blanco (poner b_7 Negro (poner c_6 Blanco (poner d_5 Negro tableroInicial))))
+	[b_7] ~~? posicionesAInvertir a_8 (poner a_8 Blanco (poner b_7 Negro (poner c_6 Blanco (poner d_5 Negro tableroInicial)))),
+	[d_2, d_3, d_4, e_2] ~~?  posicionesAInvertir d_1 tableroEjemplo
 	]
+	
+testsEjercicio6 = test [
+	True ~=? todasColor (Just Negro) (invertirTodas [d_5,e_4] tableroInicial),
+	True ~=? todasColor (Just Blanco) (invertirTodas [d_4,e_5] tableroInicial)
+	]
+	
 
 -- idem ~=? pero sin importar el orden
 (~~?) :: (Ord a, Eq a, Show a) => [a] -> [a] -> Test
@@ -146,3 +154,10 @@ e_8 = ('e',8::Int)
 f_8 = ('f',8::Int)
 g_8 = ('g',8::Int)
 h_8 = ('h',8::Int)
+
+--Es el tablero de ejemplo de la figura 2 del enunciado
+tableroEjemplo = (poner d_1 Blanco (poner f_2 Negro (poner e_2 Negro (poner d_2 Negro (poner f_4 Negro (poner f_3 Blanco (poner g_3 Blanco (poner e_3 Negro (poner d_3 Negro (poner c_3 Blanco (poner c_4 Blanco tableroInicial)))))))))))
+
+--auxiliares
+todasColor :: Maybe Color -> Tablero -> Bool
+todasColor c (T f)= all(\x -> contenido x(T f) ==  c || contenido x (T f) == Nothing ) posiciones
