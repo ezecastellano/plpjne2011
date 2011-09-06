@@ -58,7 +58,8 @@ testsEjercicio5 = test [
 	[g_4] ~~? posicionesAInvertir h_4 (poner h_4 Negro (poner g_4 Blanco (poner f_4 Negro tableroInicial))),
 	[d_4] ~~? posicionesAInvertir c_4 (poner c_4 Blanco (poner h_4 Negro (poner g_4 Blanco (poner f_4 Negro tableroInicial)))),
 	[b_7] ~~? posicionesAInvertir a_8 (poner a_8 Blanco (poner b_7 Negro (poner c_6 Blanco (poner d_5 Negro tableroInicial)))),
-	[d_2, d_3, d_4, e_2] ~~?  posicionesAInvertir d_1 tableroEjemplo
+	[d_2, d_3, d_4, e_2] ~~?  posicionesAInvertir d_1 tableroEjemplo,
+	[] ~~? posicionesAInvertir c_1 (poner c_1 Negro (poner d_1 Blanco (poner e_1 Blanco (poner f_1 Blanco vacio))))
 	]
 	
 testsEjercicio6 = test [
