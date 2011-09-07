@@ -98,14 +98,16 @@ podar' (Nodo a xs) n  =  if n > 0 then Nodo a (map (\x ->podar' x (n-1)) xs)  el
 
 
 -- Ejercicio 12
-ganador:: Juego -> Maybe Color
+ganador :: Juego -> Maybe Color
 ganador (J j t) | terminoJuego (J j t) = quienTieneMas t
 	        | otherwise	  = Nothing
 
 
 -- Ejercicio 13
---valuacionOthelo :: Valuacion
---valuacionOthelo 
+valuacionOthelo :: Valuacion
+valuacionOthelo (J j t) | ganador (J j t) == Just j = 1
+	| ganador (J j t) == Nothing = (2 * fromIntegral (cuantasFichas t j) / fromIntegral (totalFichas t)) - 1
+	| otherwise = -1
 
 
 
