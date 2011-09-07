@@ -116,7 +116,7 @@ posiciones = [ (x,y) | x <- ['a'..'h'], y <- [1..8]]
 
 -- devuelve que color tiene más fichas, utilizado en "ganador" de Othelo
 quienTieneMas :: Tablero -> Maybe Color
-quienTieneMas t	| fichasBlancas < fichasNegras = Just Blanco
+quienTieneMas t	| fichasBlancas > fichasNegras = Just Blanco
 		| fichasNegras > fichasBlancas = Just Negro
 		| otherwise 		       = Nothing
 	where 	fichasBlancas = cuantasFichas t Blanco

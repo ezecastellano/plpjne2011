@@ -35,7 +35,8 @@ testsTablero = test [
 	
 testsOthello = test [
 	"ejercicio7" ~:testsEjercicio7,
-	"ejercicio8" ~:testsEjercicio8
+	"ejercicio8" ~:testsEjercicio8,
+	"ejercicio12" ~:testsEjercicio12
 	]
 	
 testsEjercicio1 = test [
@@ -82,7 +83,31 @@ testsEjercicio7 = test [
 	]
 
 testsEjercicio8 = test [
+	[(M d_6), (M c_5), (M e_3), (M f_4)] ~~? jugadasSinJuegos (J Negro tableroInicial),
+	[(M c_2), (M d_1), (M e_1), (M f_1), (M g_4), (M f_5), (M e_6), (M f_6)] ~~? jugadasSinJuegos (J Blanco tableroEjemplo),
+	[] ~~? jugadasSinJuegos (J Negro tableroPasaNegro),
+	Paso ~=? fst (head(jugadasPosibles (J Negro tableroPasaNegro))),
+	(J Blanco tableroPasaNegro) ~=? snd (head(jugadasPosibles (J Negro tableroPasaNegro))),
+	[] ~~? jugadasSinJuegos (J Blanco tableroCompletoGanaBlanco),
+	[] ~~? jugadasSinJuegos (J Negro tableroCompletoGanaBlanco),
+	[] ~~? jugadasSinJuegos (J Blanco tableroGanaBlanco),
+	[] ~~? jugadasSinJuegos (J Negro tableroGanaBlanco)
 	]
+	
+
+testsEjercicio12 = test [
+	Nothing ~=? ganador (J Negro tableroInicial),
+	Nothing ~=? ganador (J Negro tableroPasaNegro),
+	True ~=? terminoJuego (J Blanco tableroGanaBlanco),
+	True ~=? terminoJuego (J Negro tableroGanaBlanco),
+	Just Blanco ~=? ganador (J Blanco tableroGanaBlanco),
+	True ~=? terminoJuego (J Blanco tableroCompletoGanaBlanco),
+	True ~=? terminoJuego (J Negro tableroCompletoGanaBlanco),
+	Just Blanco ~=? quienTieneMas  tableroCompletoGanaBlanco,
+	Just Blanco ~=? ganador (J Blanco tableroCompletoGanaBlanco) 
+	]
+	
+	
 -- idem ~=? pero sin importar el orden
 (~~?) :: (Ord a, Eq a, Show a) => [a] -> [a] -> Test
 expected ~~? actual = (sort expected) ~=? (sort actual)
@@ -174,9 +199,28 @@ h_8 = ('h',8::Int)
 --Es el tablero de ejemplo de la figura 2 del enunciado
 tableroEjemplo = (poner d_1 Blanco (poner f_2 Negro (poner e_2 Negro (poner d_2 Negro (poner f_4 Negro (poner f_3 Blanco (poner g_3 Blanco (poner e_3 Negro (poner d_3 Negro (poner c_3 Blanco (poner c_4 Blanco tableroInicial)))))))))))
 
+-- El negro no puede jugar en este tablero
+tableroPasaNegro = (poner b_2 Blanco (poner c_2 Blanco (poner a_2 Blanco (poner d_2 Negro (vacio)))))
+
+-- Tablero final gana el blanco
+tableroGanaBlanco = (poner b_2 Blanco (poner c_2 Blanco (poner a_2 Blanco (poner d_2 Blanco (vacio)))))
+
+-- Tablero completo con mayor cant de fichas blancas que negras
+tableroCompletoGanaBlanco = generarTableroGanaBco
+
+
 --auxiliares
+
+-- verifica que todas las pocisiones llenas sean de un color
 todasColor :: Maybe Color -> Tablero -> Bool
 todasColor c (T f)= all(\x -> contenido x(T f) ==  c || contenido x (T f) == Nothing ) posiciones
+
+--genera tablero completo en el que ganan las blancas por cantidad
+generarTableroGanaBco::Tablero
+generarTableroGanaBco = T (\p -> completoGanaBco p)
+
+completoGanaBco::Posicion->Maybe Color
+completoGanaBco (c,f) = if f<6 then Just Blanco else Just Negro
 
 
 inicial :: Juego
