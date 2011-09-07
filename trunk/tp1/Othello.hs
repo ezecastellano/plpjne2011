@@ -82,10 +82,15 @@ podar :: Int -> Arbol a -> Arbol a
 podar = flip podar'
 
 podar' :: Arbol a -> Int -> Arbol a
-podar' (Nodo a _ ) 0  = (Nodo a [])
-podar' (Nodo a xs) n  = Nodo a (map podemos xs)
-	where podemos = (podar (n-1))
---podar' = foldArbol (\x -> (\xs -> (\n -> if n == 0 then [] else xs)) )--(n)
+-- (a -> [(n -> Arbol a)] -> (n -> Arbol a)) -> Arbol a -> (n -> Arbol a)
+podar' = foldArbol (\x fs -> (\n -> Nodo x (aplicarConMapSiCero fs n))) 
+
+aplicarConMapSiCero :: [(Int -> Arbol a)] -> Int -> [Arbol a]
+aplicarConMapSiCero fs n = map (aplicar n-1) (if n == 0 then [] else fs)
+
+aplicar :: a -> (a -> b) -> b
+aplicar a f = f a
+
 -- Ejercicio 11
 {-| MINIMAX 
 -- Generación del árbol de juego: Se generarán todos los nodos hasta llegar a un estado terminal. (Listo! Parametro)
