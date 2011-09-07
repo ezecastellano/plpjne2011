@@ -125,3 +125,7 @@ quienTieneMas t	| fichasBlancas > fichasNegras = Just Blanco
 --Devuelve cuantas fichas hay de un color
 cuantasFichas :: Tablero -> Color -> Int
 cuantasFichas (T f) c = sum [1 | pos <- posiciones , (f pos) == Just c]
+
+--Devuelve la cantidad de fichas en en tablero
+totalFichas :: Tablero -> Int
+totalFichas (T f) = sum [1 | pos <- posiciones , not (contenido pos (T f) == Nothing)]
