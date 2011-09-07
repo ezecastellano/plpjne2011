@@ -6,12 +6,12 @@ import Char
 import List
 
 data Juego = J Color Tablero
-
+   
 instance Eq Juego where
    (J c1 t1) == (J c2 t2) = (c1 == c2) && (t1 == t2)
    
 data Jugada = M Posicion | Paso
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 data Arbol a = Nodo a [Arbol a] deriving Show
 type ArbolJugadas = Arbol ([Jugada], Juego)
@@ -65,7 +65,7 @@ jugadasSinJuegos j = [ M p | p <- posiciones , valida (M p) j]
 
 -- Ninguno de los dos participantes pueden realizar jugadas
 terminoJuego:: Juego -> Bool
-terminoJuego (J c t) = not (null (jugadasSinJuegos (J c t)) && null (jugadasSinJuegos  (J (invertir' c) t)))
+terminoJuego (J c t) = (null (jugadasSinJuegos (J c t)) && null (jugadasSinJuegos  (J (invertir' c) t)))
 
 -- Ejercicio 9
 
