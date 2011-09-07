@@ -70,15 +70,24 @@ adentro (c,f) = oc >= ord('a') && oc <= ord('h') && f >= 1 && f <= 8
 -- Ejercicio 5
 
 posicionesAInvertir :: Posicion -> Tablero -> [ Posicion ]
-posicionesAInvertir p0 t = (posicionesAInvertirDesp p0 t desplazarFila) ++ (posicionesAInvertirDesp p0 t desplazarColumna) ++ (posicionesAInvertirEnDiagonales p0 t )
+posicionesAInvertir p0 t = concat [ posVec (x,y) | x <- [-1,0,1], y <- [-1,0,1], vectorNoNulo (x,y) && (posValid (posVec (x,y)) (x,y))]
+	where posVec = posicionesAInvertirVector p0 t
+	      posValid = posicionesAInvertirValidas t
 
--- Recibe una función de desplazamiento y devuelve todas las posibles casillas alcanzables utilizando ese desplazamiento con cualquier distancia.
-posicionesAInvertirDesp :: Posicion -> Tablero -> (Int -> Posicion -> Posicion) -> [Posicion]
-posicionesAInvertirDesp p0 (T f) next = [z | s <-[-1,1], z <- (takeWhile (criteria p0 f) (generar (next s p0) (next s)))]
+--True si el vector no es el vector nulo
+vectorNoNulo :: (Int, Int) -> Bool
+vectorNoNulo (a,b) = not ( a == 0 && b == 0)
 
--- Similar a la anterior pero genera las posiciones en las diagonales
-posicionesAInvertirEnDiagonales :: Posicion -> Tablero -> [Posicion]
-posicionesAInvertirEnDiagonales p0 (T f)= [z | s <-[-1,1], t <- [-1, 1], z <- (takeWhile (criteria p0 f) (generar (((desplazarColumna s).( desplazarFila t)) p0) ((desplazarColumna s).( desplazarFila t))))]
+-- Para ser una secuencia valida la siguiente a la ultima debe 
+posicionesAInvertirValidas :: Tablero -> [Posicion] -> (Int, Int) -> Bool
+posicionesAInvertirValidas (T f) ps (s,t) = null ps || not ((f (next (last ps))) == Nothing)
+	where next = (desplazarColumna s).(desplazarFila t)
+
+-- Genera todas las posiciones factibles de invertirse hacia una determinada dirección
+posicionesAInvertirVector :: Posicion -> Tablero -> (Int, Int) -> [Posicion]
+posicionesAInvertirVector p0 (T f) (s,t) = takeWhile (criteria p0 f) (generar (next p0) next)
+	where next = (desplazarColumna s).(desplazarFila t)
+
 
 --Recibe una posicion dentro del tablero, devuelve false cuando recibe una de su mismo color, error si está vacia ella o la otra
 criteria:: Posicion -> (Posicion -> Maybe Color) -> Posicion -> Bool
@@ -103,10 +112,6 @@ invertir' Blanco = Negro
 invertir' Negro	= Blanco
 
 
--- BonusTrack
--- ESTO ESTA MAL, devuelve si existe al menos un casillero vacio
---isVacio::Tablero -> Bool
---isVacio t = not ([(c,f) | c<-['a'..'h'], f<-[1..8], (contenido (c,f) t) == Nothing ] == []) 
 
 -- AUXILIARES
 

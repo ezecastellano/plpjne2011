@@ -78,13 +78,13 @@ testsEjercicio7 = test [
 	Just (J Blanco tableroInicial) ~=? jugar Paso inicial,
 	Nothing ~=? jugar (M ('a',9::Int)) inicial,
 	Nothing ~=? jugar (M d_5) inicial,
-	Nothing ~=? jugar (M c_4) inicial,  -- creo que esto no pasa por el bug del ej5
+	Nothing ~=? jugar (M c_4) inicial,  
 	Just (J Blanco (poner c_5 Negro (poner d_5 Negro tableroInicial))) ~=? jugar (M c_5) inicial
 	]
 
 testsEjercicio8 = test [
 	[(M d_6), (M c_5), (M e_3), (M f_4)] ~~? jugadasSinJuegos (J Negro tableroInicial),
-	[(M c_2), (M d_1), (M e_1), (M f_1), (M g_4), (M f_5), (M e_6), (M f_6)] ~~? jugadasSinJuegos (J Blanco tableroEjemplo),
+	[(M c_2), (M e_1), (M f_1), (M g_4), (M f_5), (M d_6), (M e_6), (M f_6)] ~~? jugadasSinJuegos (J Blanco tableroEjemplo),
 	[] ~~? jugadasSinJuegos (J Negro tableroPasaNegro),
 	Paso ~=? fst (head(jugadasPosibles (J Negro tableroPasaNegro))),
 	(J Blanco tableroPasaNegro) ~=? snd (head(jugadasPosibles (J Negro tableroPasaNegro))),

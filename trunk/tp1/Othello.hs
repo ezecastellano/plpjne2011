@@ -53,7 +53,7 @@ realizarJugada p t c = invertirTodas (posicionesAInvertir p (poner p c t)) (pone
 -- Ejercicio 8
 
 jugadasPosibles :: Juego -> [(Jugada,Juego)]
-jugadasPosibles j = if  null (posiblesBuenas j) then [(Paso,j)] else posiblesBuenas j
+jugadasPosibles j = if  null (posiblesBuenas j) then [(Paso,fromJust (jugar Paso j))] else posiblesBuenas j
 
 -- Todas las jugadas posibles con sus juegos asociados
 posiblesBuenas :: Juego -> [(Jugada,Juego)]
@@ -79,11 +79,13 @@ foldArbol' f g (Nodo a ts) = f a (g (map (foldArbol' f g) ts) )
 -- Ejercicio 10 
 
 podar :: Int -> Arbol a -> Arbol a
-podar n a = foldArbol (\x xs -> podar' (Nodo x xs) (n-1)) a
+podar = flip podar'
 
 podar' :: Arbol a -> Int -> Arbol a
-podar' (Nodo a xs) n  =  if n > 0 then Nodo a (map (\x ->podar' x (n-1)) xs)  else (Nodo a []) --estas haciendo recursion explicita. Fijate que con esta funcion no haria falta llamar a "podar". Lo que entendí de la sugerencia es que solo hay que hacerla para darse cuenta como funciona podar, pero no hay que usarla. (PD: le saque el chequeo por vacia por que el map sobre lista vacias devuelve la lista vacia)
- 
+podar' (Nodo a _ ) 0  = (Nodo a [])
+podar' (Nodo a xs) n  = Nodo a (map podemos xs)
+	where podemos = (podar (n-1))
+--podar' = foldArbol (\x -> (\xs -> (\n -> if n == 0 then [] else xs)) )--(n)
 -- Ejercicio 11
 {-| MINIMAX 
 -- Generación del árbol de juego: Se generarán todos los nodos hasta llegar a un estado terminal. (Listo! Parametro)
