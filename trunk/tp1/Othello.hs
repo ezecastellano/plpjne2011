@@ -28,6 +28,14 @@ arbolDeJugadas j = Nodo ([], j) $ zipWith agmov movs hijos
         movs = map fst movsJuegos
         hijos = map (arbolDeJugadas . snd) movsJuegos
 
+
+--Auxiliares
+turnoDe :: Juego -> Color
+turnoDe (J c _) = c
+
+valor :: Arbol a -> a
+valor (Nodo a _) = a
+
 -- Ejercicio 7
 
 jugar :: Jugada -> Juego -> Maybe Juego
@@ -83,24 +91,28 @@ podar = flip podar'
 
 podar' :: Arbol a -> Int -> Arbol a
 -- (a -> [(n -> Arbol a)] -> (n -> Arbol a)) -> Arbol a -> (n -> Arbol a)
-podar' = foldArbol (\x fs -> (\n -> Nodo x (aplicarConMapSiCero fs n))) 
+podar' = foldArbol (\x fs -> (\n -> Nodo x (aplicarConMapSiNoCero fs n))) 
 
-aplicarConMapSiCero :: [(Int -> Arbol a)] -> Int -> [Arbol a]
-aplicarConMapSiCero fs n = map (aplicar n-1) (if n == 0 then [] else fs)
+aplicarConMapSiNoCero :: [(Int -> Arbol a)] -> Int -> [Arbol a]
+aplicarConMapSiNoCero fs n = map (aplicar (n-1)) (if n == 0 then [] else fs)
 
 aplicar :: a -> (a -> b) -> b
 aplicar a f = f a
 
 -- Ejercicio 11
-{-| MINIMAX 
--- Generación del árbol de juego: Se generarán todos los nodos hasta llegar a un estado terminal. (Listo! Parametro)
--- Cálculo de los valores de la función de utilidad para cada nodo terminal. (Utilizo la función valuación) Notar que los nodos terminales son los nodos donde vale 1 o -1
--- Calcular el valor de los nodos superiores a partir del valor de los inferiores. Alternativamente se elegirán o los valores mínimos o los valores máximos representando los movimientos del jugador y del oponente, de ahí el nombre de Minimax.
--- Elegir la jugada valorando los valores que han llegado al nivel superior (el nodo actual se elegio como el que tiene maximo valor de los minimos de más abajo)
--- Resumiendo, en cada nivel se elige el máximo  o el minimo dependiendo si es el turno mio o de mi oponente. -}
+-- Busca entre las jugadas de su oponente la que mejor lo deje parado. (maxima valuacion)
+-- puedo tomar head por que siempre existe al menos una jugada (Paso)
+mejorJugada :: Valuacion -> ArbolJugadas -> Jugada
+mejorJugada v (Nodo jj abs) = (head.fst) (jugadaMenosPeor abs v)
 
---mejorJugada :: Valuacion -> ArbolJugadas -> Jugada
---mejorJugada v ab = foldArbol 
+-- Entre todas las jugadas de mi contrincante, devuelvo el par ([Jugada], Juego) que mejor valuación me dé.
+jugadaMenosPeor :: [ArbolJugadas] -> Valuacion -> ([Jugada], Juego)
+jugadaMenosPeor abs v = fst (foldr maxSnd (last l) l)
+	where l = [ (valor ab, (v.snd.valor) ab) | ab <- abs ]
+
+-- toma la tupla maxima mirando por segunda componente.
+maxSnd :: Ord p => (a, p) -> (a, p) -> (a, p)
+maxSnd t1 = (\t2 -> if (snd t1) > (snd t2) then t1 else t2)
 
 
 
