@@ -36,7 +36,9 @@ testsTablero = test [
 testsOthello = test [
 	"ejercicio7" ~:testsEjercicio7,
 	"ejercicio8" ~:testsEjercicio8,
-	"ejercicio12" ~:testsEjercicio12
+	--"ejercicio9" ~:testsEjercicio9,
+	"ejercicio12" ~:testsEjercicio12,
+	"ejercicio13" ~:testsEjercicio13
 	]
 	
 testsEjercicio1 = test [
@@ -94,6 +96,9 @@ testsEjercicio8 = test [
 	[] ~~? jugadasSinJuegos (J Negro tableroGanaBlanco)
 	]
 	
+--testsEjercicio9 = test [
+--	3 ~=? foldArbol   (\n -> (\ns -> n + (map (+) ns) ) ) arbolDeUnos
+--	]
 
 testsEjercicio12 = test [
 	Nothing ~=? ganador (J Negro tableroInicial),
@@ -107,7 +112,14 @@ testsEjercicio12 = test [
 	Just Blanco ~=? ganador (J Blanco tableroCompletoGanaBlanco) 
 	]
 	
-	
+testsEjercicio13 = test [
+	0 ~=? valuacionOthelo (J Negro tableroInicial),
+	1 ~=? valuacionOthelo (J Blanco tableroGanaBlanco),
+	-1 ~=? valuacionOthelo (J Negro tableroGanaBlanco),
+	7 ~=? cuantasFichas tableroEjemplo Blanco,
+	8 ~=? cuantasFichas tableroEjemplo Negro,
+	2*7/15 -1 ~=? valuacionOthelo (J Blanco tableroEjemplo)
+	]
 -- idem ~=? pero sin importar el orden
 (~~?) :: (Ord a, Eq a, Show a) => [a] -> [a] -> Test
 expected ~~? actual = (sort expected) ~=? (sort actual)
@@ -207,6 +219,10 @@ tableroGanaBlanco = (poner b_2 Blanco (poner c_2 Blanco (poner a_2 Blanco (poner
 
 -- Tablero completo con mayor cant de fichas blancas que negras
 tableroCompletoGanaBlanco = generarTableroGanaBco
+
+--Un arbol de 2 niveles con 1 en todos los nodos
+arbolDeUnos :: Arbol Int
+arbolDeUnos = Nodo 1 [Nodo 1 [], Nodo 1 []]
 
 
 --auxiliares
