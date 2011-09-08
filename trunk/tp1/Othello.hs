@@ -13,7 +13,8 @@ instance Eq Juego where
 data Jugada = M Posicion | Paso
   deriving (Show, Eq, Ord)
 
-data Arbol a = Nodo a [Arbol a] deriving Show
+data Arbol a = Nodo a [Arbol a]
+  deriving (Show, Eq)
 type ArbolJugadas = Arbol ([Jugada], Juego)
 
 type Valuacion = Juego -> Double
