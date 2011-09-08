@@ -37,6 +37,7 @@ testsOthello = test [
 	"ejercicio7" ~:testsEjercicio7,
 	"ejercicio8" ~:testsEjercicio8,
 	--"ejercicio9" ~:testsEjercicio9,
+	"ejercicio10" ~:testsEjercicio10,
 	"ejercicio12" ~:testsEjercicio12,
 	"ejercicio13" ~:testsEjercicio13
 	]
@@ -99,6 +100,13 @@ testsEjercicio8 = test [
 --testsEjercicio9 = test [
 --	3 ~=? foldArbol   (\n -> (\ns -> n + (map (+) ns) ) ) arbolDeUnos
 --	]
+
+testsEjercicio10 = test [
+	arbolDeUnosCeroNiveles ~=? podar 0 arbolInfinitoDeUnos,
+	arbolDeUnosUnNivel ~=? podar 1 arbolInfinitoDeUnos,
+	arbolDeUnosDosNiveles ~=? podar 2 arbolInfinitoDeUnos
+	--3 ~=? foldArbol ((\n -> (\ns -> n + (map (+) ns) ) ) (podar (2 arbolInfinitoDeUnos)))
+	]
 
 testsEjercicio12 = test [
 	Nothing ~=? ganador (J Negro tableroInicial),
@@ -220,9 +228,21 @@ tableroGanaBlanco = (poner b_2 Blanco (poner c_2 Blanco (poner a_2 Blanco (poner
 -- Tablero completo con mayor cant de fichas blancas que negras
 tableroCompletoGanaBlanco = generarTableroGanaBco
 
+--Un arbol de 0 niveles con 1 en todos los nodos
+arbolDeUnosCeroNiveles :: Arbol Int
+arbolDeUnosCeroNiveles = Nodo 1 []
+
+--Un arbol de 1 nivel con 1 en todos los nodos
+arbolDeUnosUnNivel :: Arbol Int
+arbolDeUnosUnNivel = Nodo 1 [arbolDeUnosCeroNiveles, arbolDeUnosCeroNiveles]
+
 --Un arbol de 2 niveles con 1 en todos los nodos
-arbolDeUnos :: Arbol Int
-arbolDeUnos = Nodo 1 [Nodo 1 [], Nodo 1 []]
+arbolDeUnosDosNiveles :: Arbol Int
+arbolDeUnosDosNiveles = Nodo 1 [arbolDeUnosUnNivel, arbolDeUnosUnNivel]
+
+--Un arbol de infinito 1 en todos los nodos
+arbolInfinitoDeUnos :: Arbol Int
+arbolInfinitoDeUnos = Nodo 1 [arbolInfinitoDeUnos, arbolInfinitoDeUnos]
 
 
 --auxiliares
