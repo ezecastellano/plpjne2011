@@ -40,12 +40,14 @@ mover(pos(A,B), este, T) :- T = pos(X,Y), A = X, Y is B-1.
 
 % EJ 4
 % en_tablero(+Tablero, ?Pos)
-%en_tablero(T, P) :- T = tablero(TAM, _ , _), TAM = tam(A,B), P = pos(X,Y), X > 0, Y> 0, X< MAXX, Y< MAXY, MAXX is A+1, MAXY is B+1.
-
+en_tablero(tablero(tam(A,B),_, _),pos(X,Y)):-  between(1, A, X), between(1, B, Y).
 
 % EJ 5
 % pieza_ocupa(+Pieza, -Pos)
-
+pieza_ocupa(pieza(objetivo, pos(A,B)), pos(X,Y)) :- MAXA is A+1, MAXB is B+1, between(A, MAXA, X), between(B, MAXB, Y).
+pieza_ocupa(pieza(unidad, A), P) :- P = A.
+pieza_ocupa(pieza(horizontal, pos(A,B)), pos(X,Y)) :- MAXB is B+1, A = X, between(B, MAXB, Y).
+pieza_ocupa(pieza(vertical, pos(A,B)), pos(X,Y)) :- MAXA is A+1, between(A, MAXA, X), B=Y.
 
 % EJ 6
 % quitar(?X, +L, -R)
