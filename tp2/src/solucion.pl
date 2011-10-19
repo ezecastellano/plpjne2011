@@ -51,7 +51,7 @@ pieza_ocupa(pieza(vertical, pos(A,B)), pos(X,Y)) :- MAXA is A+1, between(A, MAXA
 
 % EJ 6
 % quitar(?X, +L, -R)
-
+quitar(X,L,LsinX):- append(L1,L2A,L), L2A =[A|L2], X=A, append(L1,L2,LsinX).
 
 % EJ 7
 % movimiento_valido(+Tablero, -Pieza, -Dir)
