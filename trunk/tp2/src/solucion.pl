@@ -35,7 +35,7 @@ movimiento_posible(vertical, T) :- vertical_direcciones(T).
 mover(pos(A,B), norte, T) :- T = pos(X,Y), B = Y, X is A-1.
 mover(pos(A,B), sur, T) :- T = pos(X,Y), B = Y, X is A+1.
 mover(pos(A,B), este, T) :- T = pos(X,Y), A = X, Y is B+1.
-mover(pos(A,B), este, T) :- T = pos(X,Y), A = X, Y is B-1.
+mover(pos(A,B), oeste, T) :- T = pos(X,Y), A = X, Y is B-1.
 
 
 % EJ 4
@@ -55,7 +55,7 @@ quitar(X,L,LsinX):- append(L1,L2A,L), L2A =[A|L2], X=A, append(L1,L2,LsinX).
 
 % EJ 7
 % movimiento_valido(+Tablero, -Pieza, -Dir)
-
+movimiento_valido(T1, Pieza, Dir):- T1 = tablero(_,_,Piezas), member(Pieza,Piezas), Pieza = pieza(TipoPieza, PosVieja), movimiento_posible(TipoPieza, Dir), mover(PosVieja, Dir, PosNueva), en_tablero(T1, PosNueva), P= pieza(_, Pos), forall(member(P, Piezas), Pos\= PosNueva).
 
 % EJ 8
 % mover_pieza(+Tablero1, +Pieza, +Dir, -Tablero2)
