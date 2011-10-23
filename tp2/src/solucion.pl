@@ -65,9 +65,11 @@ moverPieza(PiezasInicial, Pieza , Direccion, PiezasFinal) :- quitar(Pieza, Pieza
 
 agregar_ordenado(Elemento, Lista, ResultadoOrdenado) :- sort([Elemento|Lista], ResultadoOrdenado).
 
-
 % EJ 9
 % resolver(+Tablero, -Movimientos, -TableroFinal)
+resolver(TableroInicial, Movimientos, TableroFinal) :- TableroIteracion = TableroInicial, forall(member((Pieza,Dir), Movimientos), realizar_movimiento(TableroIteracion, Pieza, Dir, TableroProximaIteracion)), TableroFinal = TableroProximaIteracion.
+
+realizar_movimiento(TableroIteracion, Pieza, Dir, TableroProximaIteracion) :- movimiento_valido(TableroIteracion, Pieza, Dir), mover_pieza(TableroIteracion, Pieza, Dir, TableroProximaIteracion).
 
 
 % EJ 10
@@ -77,4 +79,5 @@ agregar_ordenado(Elemento, Lista, ResultadoOrdenado) :- sort([Elemento|Lista], R
 % EJ 11
 % armar_tablerosB(?Tablero)
 
-%mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(3, 1)), sur , T).
+%mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(1, 3)), sur , T).
+% problema(t0, Tablero), resolver(Tablero, _, Final),mostrar(Tablero), mostrar(Final).
