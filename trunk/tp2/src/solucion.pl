@@ -59,6 +59,11 @@ movimiento_valido(T1, Pieza, Dir):- T1 = tablero(_,_,Piezas), member(Pieza,Pieza
 
 % EJ 8
 % mover_pieza(+Tablero1, +Pieza, +Dir, -Tablero2)
+mover_pieza(T1, P, D, T2) :- T1 = tablero(Tam, PosObjetivo, Piezas1), moverPieza(Piezas1, P, D, Piezas2), T2 = tablero(Tam, PosObjetivo, Piezas2).
+
+moverPieza(PiezasInicial, Pieza , Direccion, PiezasFinal) :- quitar(Pieza, PiezasInicial, PiezasInicialSinPieza), Pieza = pieza(Tip, Pos), mover(Pos, Direccion, NuevaPos), NuevaPieza = pieza(Tip, NuevaPos), agregar_ordenado(NuevaPieza, PiezasInicialSinPieza, PiezasFinal).
+
+agregar_ordenado(Elemento, Lista, ResultadoOrdenado) :- sort([Elemento|Lista], ResultadoOrdenado).
 
 
 % EJ 9
@@ -72,4 +77,4 @@ movimiento_valido(T1, Pieza, Dir):- T1 = tablero(_,_,Piezas), member(Pieza,Pieza
 % EJ 11
 % armar_tablerosB(?Tablero)
 
-
+%mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(3, 1)), sur , T).
