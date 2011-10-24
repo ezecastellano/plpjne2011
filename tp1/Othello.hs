@@ -5,6 +5,7 @@ import Tablero
 import Char
 import List
 
+
 data Juego = J Color Tablero
    
 instance Eq Juego where
@@ -104,7 +105,28 @@ aplicar a f = f a
 -- Busca entre las jugadas de su oponente la que mejor lo deje parado. (maxima valuacion)
 -- puedo tomar head por que siempre existe al menos una jugada (Paso)
 mejorJugada :: Valuacion -> ArbolJugadas -> Jugada
-mejorJugada v (Nodo jj abs) = (head.fst) (jugadaMenosPeor abs v)
+mejorJugada v ab = (head.snd) (minimax v (-1) ab) 
+
+minimax :: Valuacion -> Int -> ArbolJugadas -> (Double, [Jugada])
+minimax v m = foldArbol (foldMini v m)
+
+foldMini :: Valuacion -> Int -> ([Jugada], Juego) -> [(Double, [Jugada])] -> (Double, [Jugada])
+foldMini v m (jugs, jue)  djss =  if null djss then (v jue, jugs) else maximinL (m* -1) djss 
+
+--djss no es vacia
+maximinL :: Int -> [(Double, [Jugada])] -> (Double, [Jugada])
+maximinL m djss = foldr (maxFst m) (head djss) djss
+
+-- Maximo por primer componente
+maxFst :: Int -> (Double, b) -> (Double, b) -> (Double,b)
+maxFst m t1 t2 | ((fromIntegral m) * (fst t2)) >  ((fromIntegral m) * (fst t1)) = t2
+	       | otherwise 	              = t1
+
+-- 
+f :: (Double, [Jugada]) -> [Jugada] -> (Double, [Jugada])
+f (a, js) j = (a, js ++ j)
+
+
 
 -- Entre todas las jugadas de mi contrincante, devuelvo el par ([Jugada], Juego) que mejor valuación me dé.
 jugadaMenosPeor :: [ArbolJugadas] -> Valuacion -> ([Jugada], Juego)

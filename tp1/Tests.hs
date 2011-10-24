@@ -36,8 +36,9 @@ testsTablero = test [
 testsOthello = test [
 	"ejercicio7" ~:testsEjercicio7,
 	"ejercicio8" ~:testsEjercicio8,
-	--"ejercicio9" ~:testsEjercicio9,
+	"ejercicio9" ~:testsEjercicio9,
 	"ejercicio10" ~:testsEjercicio10,
+	"ejercicio11" ~:testsEjercicio11,
 	"ejercicio12" ~:testsEjercicio12,
 	"ejercicio13" ~:testsEjercicio13
 	]
@@ -97,15 +98,20 @@ testsEjercicio8 = test [
 	[] ~~? jugadasSinJuegos (J Negro tableroGanaBlanco)
 	]
 	
---testsEjercicio9 = test [
---	3 ~=? foldArbol   (\n -> (\ns -> n + (map (+) ns) ) ) arbolDeUnos
---	]
+testsEjercicio9 = test [
+	3 ~=? foldArbol (\x -> (foldr (+) x)) arbolDeUnosUnNivel
+	]
 
 testsEjercicio10 = test [
 	arbolDeUnosCeroNiveles ~=? podar 0 arbolInfinitoDeUnos,
 	arbolDeUnosUnNivel ~=? podar 1 arbolInfinitoDeUnos,
-	arbolDeUnosDosNiveles ~=? podar 2 arbolInfinitoDeUnos
-	--3 ~=? foldArbol ((\n -> (\ns -> n + (map (+) ns) ) ) (podar (2 arbolInfinitoDeUnos)))
+	arbolDeUnosDosNiveles ~=? podar 2 arbolInfinitoDeUnos,
+	7 ~=? foldArbol (\x -> (foldr (+) x)) (podar 2 arbolInfinitoDeUnos),
+	15 ~=? foldArbol (\x -> (foldr (+) x)) (podar 3 arbolJNE)
+	]
+
+testsEjercicio11 = test [
+	(M c_5) ~=? mejorJugada valuacionOthelo (podar 3 (arbolDeJugadas inicial))
 	]
 
 testsEjercicio12 = test [
@@ -243,6 +249,8 @@ arbolDeUnosDosNiveles = Nodo 1 [arbolDeUnosUnNivel, arbolDeUnosUnNivel]
 --Un arbol de infinito 1 en todos los nodos
 arbolInfinitoDeUnos :: Arbol Int
 arbolInfinitoDeUnos = Nodo 1 [arbolInfinitoDeUnos, arbolInfinitoDeUnos]
+
+arbolJNE = Nodo 1 [arbolInfinitoDeUnos, arbolDeUnosDosNiveles]
 
 
 --auxiliares
