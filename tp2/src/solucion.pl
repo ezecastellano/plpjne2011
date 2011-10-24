@@ -55,22 +55,40 @@ quitar(X,L,LsinX):- append(L1,L2A,L), L2A =[A|L2], X=A, append(L1,L2,LsinX).
 
 % EJ 7
 % movimiento_valido(+Tablero, -Pieza, -Dir)
-movimiento_valido(T1, Pieza, Dir):- T1 = tablero(_,_,Piezas), member(Pieza,Piezas), Pieza = pieza(TipoPieza, PosVieja), movimiento_posible(TipoPieza, Dir), mover(PosVieja, Dir, PosNueva), en_tablero(T1, PosNueva), P= pieza(_, Pos), forall(member(P, Piezas), Pos\= PosNueva).
+movimiento_valido(T1, Pieza, Dir):- 
+	T1 = tablero(_,_,Piezas),
+	member(Pieza,Piezas),
+	Pieza = pieza(TipoPieza, PosVieja), 
+	movimiento_posible(TipoPieza, Dir),
+	mover(PosVieja, Dir, PosNueva),
+	en_tablero(T1, PosNueva),
+	P= pieza(_, Pos),
+	forall(member(P, Piezas), Pos\= PosNueva).
 
 % EJ 8
 % mover_pieza(+Tablero1, +Pieza, +Dir, -Tablero2)
-mover_pieza(T1, P, D, T2) :- T1 = tablero(Tam, PosObjetivo, Piezas1), moverPieza(Piezas1, P, D, Piezas2), T2 = tablero(Tam, PosObjetivo, Piezas2).
+mover_pieza(T1, P, D, T2):-
+	T1 = tablero(Tam, PosObjetivo, Piezas1),
+	moverPieza(Piezas1, P, D, Piezas2),
+	T2 = tablero(Tam, PosObjetivo, Piezas2).
 
-moverPieza(PiezasInicial, Pieza , Direccion, PiezasFinal) :- quitar(Pieza, PiezasInicial, PiezasInicialSinPieza), Pieza = pieza(Tip, Pos), mover(Pos, Direccion, NuevaPos), NuevaPieza = pieza(Tip, NuevaPos), agregar_ordenado(NuevaPieza, PiezasInicialSinPieza, PiezasFinal).
+moverPieza(PiezasInicial, Pieza , Direccion, PiezasFinal):-
+	quitar(Pieza, PiezasInicial, PiezasInicialSinPieza),
+	Pieza = pieza(Tip, Pos), 
+	mover(Pos, Direccion, NuevaPos),
+	NuevaPieza = pieza(Tip, NuevaPos),
+	agregar_ordenado(NuevaPieza, PiezasInicialSinPieza, PiezasFinal).
 
-agregar_ordenado(Elemento, Lista, ResultadoOrdenado) :- sort([Elemento|Lista], ResultadoOrdenado).
+agregar_ordenado(Elemento, Lista, ResultadoOrdenado):- sort([Elemento|Lista], ResultadoOrdenado).
 
 % EJ 9
 % resolver(+Tablero, -Movimientos, -TableroFinal)
-resolver(TableroInicial, Movimientos, TableroFinal) :- TableroIteracion = TableroInicial, forall(member((Pieza,Dir), Movimientos), realizar_movimiento(TableroIteracion, Pieza, Dir, TableroProximaIteracion)), TableroFinal = TableroProximaIteracion.
-
-realizar_movimiento(TableroIteracion, Pieza, Dir, TableroProximaIteracion) :- movimiento_valido(TableroIteracion, Pieza, Dir), mover_pieza(TableroIteracion, Pieza, Dir, TableroProximaIteracion).
-
+resolver(TableroInicial, [], TableroFinal):- TableroInicial = TableroFinal.
+resolver(TableroInicial, [(Pieza, Dir)| Movimientos], TableroFinal):- 
+	movimiento_valido(TableroInicial, Pieza, Dir), 
+	mover_pieza(TableroInicial, Pieza, Dir, TableroIteracion), 
+	resolver(TableroIteracion, Movimientos, TableroFinal).
+%No estoy segura de que ande bien el 9
 
 % EJ 10
 % armar_tablerosA(?Tablero)
@@ -79,5 +97,5 @@ realizar_movimiento(TableroIteracion, Pieza, Dir, TableroProximaIteracion) :- mo
 % EJ 11
 % armar_tablerosB(?Tablero)
 
-%mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(1, 3)), sur , T).
-% problema(t0, Tablero), resolver(Tablero, _, Final),mostrar(Tablero), mostrar(Final).
+%mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(1, 3)), sur , T). Anda OK
+%problema(t0, Tablero), resolver(Tablero, _, Final),mostrar(Tablero), mostrar(Final).
