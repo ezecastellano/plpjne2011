@@ -51,7 +51,7 @@ pieza_ocupa(pieza(vertical, pos(A,B)), pos(X,Y)) :- MAXA is A+1, between(A, MAXA
 
 % EJ 6
 % quitar(?X, +L, -R)
-quitar(X,L,LsinX):- append(L1,L2A,L), L2A =[A|L2], X=A, append(L1,L2,LsinX).
+quitar(X,L,LsinX):- append(L1,[X|L2],L), append(L1,L2,LsinX).
 
 % EJ 7
 % movimiento_valido(+Tablero, -Pieza, -Dir)
@@ -63,7 +63,9 @@ movimiento_valido(T1, Pieza, Dir):-
 	mover(PosVieja, Dir, PosNueva),
 	en_tablero(T1, PosNueva),
 	P= pieza(_, Pos),
-	forall(member(P, Piezas), Pos\= PosNueva).
+	forall(member(P, Piezas), Pos \= PosNueva).
+	
+
 
 % EJ 8
 % mover_pieza(+Tablero1, +Pieza, +Dir, -Tablero2)
@@ -71,6 +73,7 @@ mover_pieza(T1, P, D, T2):-
 	T1 = tablero(Tam, PosObjetivo, Piezas1),
 	moverPieza(Piezas1, P, D, Piezas2),
 	T2 = tablero(Tam, PosObjetivo, Piezas2).
+
 
 moverPieza(PiezasInicial, Pieza , Direccion, PiezasFinal):-
 	quitar(Pieza, PiezasInicial, PiezasInicialSinPieza),
@@ -83,7 +86,9 @@ agregar_ordenado(Elemento, Lista, ResultadoOrdenado):- sort([Elemento|Lista], Re
 
 % EJ 9
 % resolver(+Tablero, -Movimientos, -TableroFinal)
-resolver(TableroInicial, [], TableroFinal):- TableroInicial = TableroFinal.
+resolver(TableroInicial, [], TableroInicial):- 
+	TableroInicial = tablero(_, Pos,Piezas),
+	member(pieza(objetivo, Pos), Piezas).
 resolver(TableroInicial, [(Pieza, Dir)| Movimientos], TableroFinal):- 
 	movimiento_valido(TableroInicial, Pieza, Dir), 
 	mover_pieza(TableroInicial, Pieza, Dir, TableroIteracion), 
