@@ -51,21 +51,33 @@ pieza_ocupa(pieza(vertical, pos(A,B)), pos(X,Y)) :- MAXA is A+1, between(A, MAXA
 
 % EJ 6
 % quitar(?X, +L, -R)
-quitar(X,L,LsinX):- append(L1,[X|L2],L), append(L1,L2,LsinX).
+quitar(X,L,LsinX):- append(L1,L2A,L), L2A =[A|L2], X=A, append(L1,L2,LsinX).
 
 % EJ 7
 % movimiento_valido(+Tablero, -Pieza, -Dir)
 movimiento_valido(T1, Pieza, Dir):- 
+%Pieza es una pieza del tablero
 	T1 = tablero(_,_,Piezas),
 	member(Pieza,Piezas),
-	Pieza = pieza(TipoPieza, PosVieja), 
+	Pieza = pieza(TipoPieza, PosVieja),
+%Pieza se puede mover en dicha direccion
 	movimiento_posible(TipoPieza, Dir),
 	mover(PosVieja, Dir, PosNueva),
-	en_tablero(T1, PosNueva),
-	P= pieza(_, Pos),
-	forall(member(P, Piezas), Pos \= PosNueva).
-	
+%Su nueva posicion esta en el tablero
+	PiezaNueva = pieza(TipoPieza, PosNueva),
+	pieza_en_tablero(T1, PiezaNueva),
+%Su nueva posicion no se superpone con otra pieza
+	DemasPiezas = quitar(Pieza, Piezas),
+	no_superponen_entre_piezas(DemasPiezas, PiezaNueva).
 
+% pieza_en_tablero(+T, +PiezaNueva)
+pieza_en_tablero(T, PiezaNueva):-
+	forall(pieza_ocupa(PiezaNueva, PosNuevaOcupada), en_tablero(T, PosNuevaOcupada)).
+
+%Espera que PiezaNueva no este en piezas
+%no_superponen_entre_piezas(+Piezas, +PiezaNueva)
+no_superponen_entre_piezas(Piezas, PiezaNueva):-
+	forall( pieza_ocupa(PiezaNueva, PosOcupa), forall( member(P,Piezas), forall(pieza_ocupa(P, PosOcupaP),	PosOcupaP \= PosOcupa))).
 
 % EJ 8
 % mover_pieza(+Tablero1, +Pieza, +Dir, -Tablero2)
@@ -73,7 +85,6 @@ mover_pieza(T1, P, D, T2):-
 	T1 = tablero(Tam, PosObjetivo, Piezas1),
 	moverPieza(Piezas1, P, D, Piezas2),
 	T2 = tablero(Tam, PosObjetivo, Piezas2).
-
 
 moverPieza(PiezasInicial, Pieza , Direccion, PiezasFinal):-
 	quitar(Pieza, PiezasInicial, PiezasInicialSinPieza),
@@ -86,14 +97,19 @@ agregar_ordenado(Elemento, Lista, ResultadoOrdenado):- sort([Elemento|Lista], Re
 
 % EJ 9
 % resolver(+Tablero, -Movimientos, -TableroFinal)
-resolver(TableroInicial, [], TableroInicial):- 
-	TableroInicial = tablero(_, Pos,Piezas),
+resolver(Tablero, Movimientos, TableroFinal) :- resolverParametro(Tablero, [], Movimientos, TableroFinal).
+ 
+% resolverParametro(+TableroInicial, +TablerosViejos, +Movimientos, +TableroInicial) 
+resolverParametro(TableroInicial, _, [], TableroInicial):- 
+	TableroInicial = tablero(_, Pos,Piezas), 
 	member(pieza(objetivo, Pos), Piezas).
-resolver(TableroInicial, [(Pieza, Dir)| Movimientos], TableroFinal):- 
+	
+resolverParametro(TableroInicial, TablerosViejos, [(Pieza, Dir)| Movimientos], TableroFinal):- 
+	not(member(TableroInicial, TablerosViejos)),
 	movimiento_valido(TableroInicial, Pieza, Dir), 
 	mover_pieza(TableroInicial, Pieza, Dir, TableroIteracion), 
-	resolver(TableroIteracion, Movimientos, TableroFinal).
-%No estoy segura de que ande bien el 9
+	resolverParametro(TableroIteracion, [TableroInicial |TablerosViejos], Movimientos, TableroFinal).
+	
 
 % EJ 10
 % armar_tablerosA(?Tablero)
@@ -104,3 +120,7 @@ resolver(TableroInicial, [(Pieza, Dir)| Movimientos], TableroFinal):-
 
 %mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(1, 3)), sur , T). Anda OK
 %problema(t0, Tablero), resolver(Tablero, _, Final),mostrar(Tablero), mostrar(Final).
+%movimiento_valido(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo, pos(1, 3)), sur), mostrar(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
+%pieza_en_tablero(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo, pos(1,4)))
+%problema(t0, Tablero), resolver(Tablero, _, Final), mostrar(Tablero), mostrar(Final).
+%problema(t0, T0), mover_pieza(T0, pieza(objetivo , pos(3, 1)), sur , T).
