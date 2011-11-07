@@ -121,6 +121,7 @@ armar_tablerosA(tablero(Dim, Pos, Piezas)):-
 	
 
 % resoluble(+Tablero)
+% Vale si el tablero es resoluble con alguna lista de movimientos.
 resoluble(T):-
 	resolver(T, _, _),!.
 
