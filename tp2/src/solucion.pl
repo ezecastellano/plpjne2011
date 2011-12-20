@@ -158,10 +158,84 @@ pieza_en_tablero(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), piez
 problema(t0, T0), mover_pieza(T0, pieza(objetivo , pos(3, 1)), sur , T).
 problema(t0, Tablero), resolver(Tablero, _, Final), mostrar(Tablero), mostrar(Final).
 resolver(tablero(tam(2,3),pos(1,2), [pieza(objetivo, pos(1,1)), pieza(vertical, pos(1,3))]), MS, TF), mostrar(TF).
-armar_tablerosA(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
-armar_tablerosA(tablero(tam(2,4),pos(1,2), [pieza(objetivo, O), pieza(unidad, P), pieza(unidad, P2)])).
-problema(t0, Tablero), movimiento_valido(Tablero, Pieza, Dir), mover_pieza(Tablero, Pieza, Dir, TIteracion).
+
+%Debería poder ser armado ya que las piezas se encuentran posicionadas de manera correcta en el tablero. 
+armar_tablerosF(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
+armar_tablerosG(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
+
+%Debería poder ubicar las piezas con varias posibilidades
+armar_tablerosF(tablero(tam(2,4),pos(1,2), [pieza(objetivo, PO), pieza(unidad, PU1), pieza(unidad, PU2)])).
+
+%No debería armar un tablero sin objetivo. 
+armar_tablerosF(tablero(tam(4, 4), pos(3, 3), [pieza(vertical, P)])).
+
+%No debería armar un tablero con dos objetivos. 
+armar_tablerosF(tablero(tam(5, 5), pos(3, 3), [pieza(objetivo, P), pieza(objetivo, Q)])).
+
+%No debería poder ser armado ya que no entran las piezas 
+armar_tablerosF(tablero(tam(3, 2), pos(1, 1), [pieza(objetivo, P), pieza(vertical, Q)])).
+
+%Debería poder ser armado con una posibilidad. 
+armar_tablerosF(tablero(tam(2, 3), pos(1, 1), [pieza(objetivo, P), pieza(vertical, Q)])).
+
 */
+
+% EJ 10
+% armar_tablerosF(?Tablero)
+armar_tablerosF(tablero(Dim, Pos, Piezas)):-
+	ubicar_piezas_en_tableroF(tablero(Dim, Pos, []), Piezas, T2),
+	un_objetivo(Piezas),
+	sort(Piezas,Piezas),
+	resoluble(T2)	.
+
+%Verifica que tenga una sola pieza objetivo. 
+%Las piezas deben tener instanciado el tipo. 
+%un_objetivo(+Piezas)
+un_objetivo(Piezas):- 
+	member(pieza(objetivo, PosPiezaObj), Piezas),
+	quitar(pieza(objetivo, PosPiezaObj), Piezas, PiezasSinObjetivo),
+	not(member(pieza(objetivo, _), PiezasSinObjetivo)).
+
+% Devuelve el tablero recibido con las piezas instanciadas generando 
+% todas las combinaciones, dentro del tablero y sin superponerse.
+% ubicar_piezas_en_tableroF(+TableroInicial, ?Piezas, -TableroFinal)
+ubicar_piezas_en_tableroF(TableroConTodas, [], TableroConTodas).
+
+ubicar_piezas_en_tableroF(TableroSinPieza, [Pieza|Piezas], TableroConTodas) :-
+	%Instancia la posición de la pieza en caso de ser necesario. 
+	poner_si_validaF(TableroSinPieza, Pieza, TableroConPieza),
+	%Realiza la recursión sobre el resto de las piezas. 
+	ubicar_piezas_en_tableroF(TableroConPieza, Piezas, TableroConTodas).
+
+
+%Pone en TableroFinal la pieza si es valida.
+%Se encarga de instanciar la posición en caso de no estarlo. 
+%poner_si_validaF(+TableroInicial, ?Pieza, -TableroFinal)
+poner_si_validaF(tablero(Dim, Pos, PiezasOriginales), pieza(TipoPieza,Posicion),
+	tablero(Dim, Pos, [pieza(TipoPieza,Posicion)|PiezasOriginales])):-
+	%Me instancia la pieza en alguna posicion.
+	en_tablero(tablero(Dim, Pos, PiezasOriginales), Posicion),
+	%Chequeo que las posiciones que ocupa la pieza estén en el tablero
+	pieza_en_tablero(tablero(Dim, Pos, PiezasOriginales), pieza(TipoPieza,Posicion)), 
+	%Chequeo que la pieza no se superponga con ninguna otra. 
+	no_superponen_entre_piezas(PiezasOriginales, pieza(TipoPieza,Posicion)).
+
+
+% EJ 11
+% armar_tablerosG(?Tablero)
+armar_tablerosG(tablero(Dim, Pos, Piezas)):-
+	ubicar_piezas_en_tableroG(tablero(Dim, Pos, []), Piezas, _).
+
+ubicar_piezas_en_tableroG(TableroSinPieza, [Pieza|Piezas], TableroConTodas) :-
+	%Instancia la posición de la pieza en caso de ser necesario. 
+	poner_si_validaF(TableroSinPieza, Pieza, tablero(Tam,PosObj,PiezasTablero)),
+	%Verifico lo que antes revisaba a nivel tablero final en cada momento que agrego una pieza. 
+	un_objetivo(PiezasTablero),
+	sort(PiezasTablero,PiezasTablero),
+	resoluble(tablero(Tam,PosObj,PiezasTablero)),
+	%Realiza la recursión sobre el resto de las piezas. 
+	ubicar_piezas_en_tableroG(tablero(Tam,PosObj,PiezasTablero), Piezas, TableroConTodas).
+
 
 
 % EJ 10
