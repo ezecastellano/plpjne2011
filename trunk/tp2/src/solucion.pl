@@ -104,22 +104,22 @@ armar_tablerosA(tablero(Dim, Pos, Piezas)):-
 	/* Ordenamos por orden lexicografico */
 	sort(Piezas,PiezasOrdenadas),
 	/* Primero acomodamos la objetivo y chequeamos que haya solo una: */
-	quitar(pieza(objetivo, PObj), PiezasOrdenadas, SinObjetivo),
-	poner_si_valida(tablero(Dim, Pos, Piezas), pieza(objetivo, PObj), NuevoT),
-	not(member(pieza(objetivo, _), SinObjetivo)),
+	member(pieza(objetivo, PosPiezaObj), PiezasOrdenadas),
+	quitar(pieza(objetivo, PosPiezaObj), PiezasOrdenadas, PiezasSinObjetivo),
+	poner_si_valida(tablero(Dim, Pos, Piezas), pieza(objetivo, PosPiezaObj), TableroConObjetivo),
+	not(member(pieza(objetivo, _), PiezasSinObjetivo)),
 	/* Ubicar cada una de las piezas, mientras sea resoluble*/
-	ubicar_piezas_en_tablero(NuevoT, SinObjetivo, T2),
-	resoluble(T2),
-	mostrar(T2).
+	ubicar_piezas_en_tablero(TableroConObjetivo, PiezasSinObjetivo, TableroUbicado),
+	resoluble(TableroUbicado),
+	mostrar(TableroUbicado).
 	
 % resoluble(+Tablero)
 % Vale si el tablero es resoluble con alguna lista de movimientos.
 resoluble(T):-
 	resolver(T, _, _),!.
 
-% devuelve el tablero recibido con las piezas instanciadas.
-% generando todas las combinaciones
-% (dentro del tablero y sin superponerse)
+% Devuelve el tablero recibido con las piezas instanciadas,
+% generando todas las combinaciones(dentro del tablero y sin superponerse).
 % ubicar_piezas_en_tablero(+Tablero, ?Piezas, -Tablero)
 ubicar_piezas_en_tablero(T1, [], T1).
 ubicar_piezas_en_tablero(T1, [Pieza|Piezas], T2) :-
@@ -129,11 +129,11 @@ ubicar_piezas_en_tablero(T1, [Pieza|Piezas], T2) :-
 
 % pone en TF la pieza si es valida.
 % poner_si_valida(+T1, ?Pieza, -TF)
-poner_si_valida(tablero(Dim, Pos, PiezasOriginales), pieza(Tipo,Posicion), tablero(Dim, Pos, PiezasNuevas)):-
-	en_tablero(tablero(Dim, Pos, PiezasOriginales), Posicion),
-	pieza_en_tablero(tablero(Dim, Pos, PiezasOriginales), pieza(Tipo,Posicion)),
-	no_superponen_entre_piezas(PiezasOriginales, pieza(Tipo,Posicion)),
-	agregar_ordenado(pieza(Tipo,Posicion), PiezasOriginales, PiezasNuevas).
+poner_si_valida(tablero(Dim, PosObjetivo, PiezasOriginales), pieza(Tipo,Posicion), tablero(Dim, PosObjetivo, [pieza(Tipo,Posicion)| PiezasOriginales])):-
+	en_tablero(tablero(Dim, PosObjetivo, PiezasOriginales), Posicion),
+	pieza_en_tablero(tablero(Dim, PosObjetivo, PiezasOriginales), pieza(Tipo,Posicion)),
+	no_superponen_entre_piezas(PiezasOriginales, pieza(Tipo,Posicion)).
+%	agregar_ordenado(pieza(Tipo,Posicion), PiezasOriginales, PiezasNuevas).
 
 % EJ 11
 % armar_tablerosB(?Tablero)
@@ -149,17 +149,91 @@ ubicar_piezas_en_tableroB(T1, [Pieza|Piezas], T2) :-
 	resoluble(T3),
 	ubicar_piezas_en_tableroB(T3, Piezas, T2).
 	
+/*
+Tests Helper:
+mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(1, 3)), sur , T). Anda OK
+problema(t0, Tablero), resolver(Tablero, _, Final),mostrar(Tablero), mostrar(Final).
+movimiento_valido(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo, pos(1, 3)), sur), mostrar(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
+pieza_en_tablero(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo, pos(1,4)))
+problema(t0, T0), mover_pieza(T0, pieza(objetivo , pos(3, 1)), sur , T).
+problema(t0, Tablero), resolver(Tablero, _, Final), mostrar(Tablero), mostrar(Final).
+resolver(tablero(tam(2,3),pos(1,2), [pieza(objetivo, pos(1,1)), pieza(vertical, pos(1,3))]), MS, TF), mostrar(TF).
+armar_tablerosA(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
+armar_tablerosA(tablero(tam(2,4),pos(1,2), [pieza(objetivo, O), pieza(unidad, P), pieza(unidad, P2)])).
+problema(t0, Tablero), movimiento_valido(Tablero, Pieza, Dir), mover_pieza(Tablero, Pieza, Dir, TIteracion).
+*/
 
-% Tests:
-% mover_pieza(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo , pos(1, 3)), sur , T). Anda OK
-% problema(t0, Tablero), resolver(Tablero, _, Final),mostrar(Tablero), mostrar(Final).
-% movimiento_valido(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo, pos(1, 3)), sur), mostrar(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
-% pieza_en_tablero(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))]), pieza(objetivo, pos(1,4)))
-% problema(t0, T0), mover_pieza(T0, pieza(objetivo , pos(3, 1)), sur , T).
-% problema(t0, Tablero), resolver(Tablero, _, Final), mostrar(Tablero), mostrar(Final).
-% resolver(tablero(tam(2,3),pos(1,2), [pieza(objetivo, pos(1,1)), pieza(vertical, pos(1,3))]), MS, TF), mostrar(TF).
-% armar_tablerosA(tablero(tam(4, 4), pos(3, 3), [pieza(objetivo, pos(1, 3)), pieza(vertical, pos(3,2))])).
-% armar_tablerosA(tablero(tam(2,4),pos(1,2), [pieza(objetivo, O), pieza(unidad, P), pieza(unidad, P2)])).
 
-% problema(t0, Tablero), movimiento_valido(Tablero, Pieza, Dir), mover_pieza(Tablero, Pieza, Dir, TIteracion).
+% EJ 10
+/* armar_tablerosC:
+	Para cada tablero ingresado, se encarga de devolver todos aquellos con piezas instanciadas
+	tal que cumplen con el invariante de ser un tablero válido y resoluble. Además aquellas piezas
+	que estaban instanciadas se mantienen inalteradas.
+*/
+% armar_tablerosC(?Tablero)
+armar_tablerosC(Tablero) :-
+	Tablero = tablero(tam(_, _), pos(_, _), Ps),
+	forall(member(pieza(_, pos(X,_)),Ps), nonvar(X)), %verifica que todas las posiciones X estan instanciadas
+	forall(member(pieza(_, pos(_,Y)),Ps), nonvar(Y)), %lo mismo para Y
+	sort(Ps, Ps), %se asegura que cumple con el invariante del orden
+	forall(quitar(PiezaActual, Ps, PR), %verifica que no hay piesas que se pisen
+		forall(member(PiezaCompara, PR),
+			forall(pieza_ocupa(PiezaActual, PosFichaNueva),
+				forall(pieza_ocupa(PiezaCompara, PosAux), PosAux \= PosFichaNueva)
+			)
+		)
+	),
+	resolver(Tablero, _, _), %que el tablero sea resoluble 
+	!. %y con que haya una sola ya toma el tablero como váldo
+armar_tablerosC(tablero(tam(Filas, Columnas), pos(XObj, YObj), Ps)) :-
+	(not(forall(member(pieza(_, pos(X,_)),Ps), nonvar(X))) ;
+		not(forall(member(pieza(_,pos(_,Y)),Ps), nonvar(Y)))), !, %en estas dos lineas, se fija que quede alguna piesa por resolver
+	%ahora, si todavía existe alguna sin instanciar
+	member(pieza(Tipo, pos(X,Y)), Ps), %para cada pieza
+	(var(X) ; var(Y)), !, %filtrando solo las que tienen alguna de sus variables no instanciadas
+	tamano(Tipo, tam(XTamAux, YTamAux)),
+	FilasMax is Filas - XTamAux + 1,
+	ColumnasMax is Columnas - YTamAux + 1,
+	between(1,FilasMax,X), %si X no está instanciada, para cada x en el tablero. Si x esta instnaciada solo para la suya da true
+	between(1,ColumnasMax,Y), %igual para Y
+	%hasta aca nos aseguramos que no se vaya del tablero
+	armar_tablerosC(tablero(tam(Filas, Columnas), pos(XObj, YObj), Ps)). %recursion
 
+% EJ 11
+/* armar_tablerosD:
+	Para cada tablero ingresado, se encarga de devolver todos aquellos con piezas instanciadas
+	tal que cumplen con el invariante de ser un tablero válido y resoluble. Además aquellas piezas
+	que estaban instanciadas se mantienen inalteradas. La diferencia con armar_tablerosC es que
+	va cumpliendo con el invariante durante el proceso de armado del tablero, haciendo la poda
+	mucho mas eficiente. 
+*/
+% armar_tablerosD(?Tablero)
+armar_tablerosD(Tablero) :- %caso base
+	Tablero = tablero(tam(_, _), pos(_, _), Ps),
+	forall(member(pieza(_, pos(X,_)),Ps), nonvar(X)), %si ya estan todas las posiciones X instanciadas
+	forall(member(pieza(_, pos(_,Y)),Ps), nonvar(Y)), %y todas las posiciones Y instanciadas
+	resolver(Tablero, _, _), !. %y el tablero final se puede resolver al menos una vez, cumple con esta regla
+
+armar_tablerosD(tablero(tam(Filas, Columnas), pos(XObj, YObj), Ps)) :-
+	(not(forall(member(pieza(_, pos(X,_)),Ps), nonvar(X))) ;
+		not(forall(member(pieza(_,pos(_,Y)),Ps), nonvar(Y)))), !, %si existe alguna posicion no instanciada
+	%ahora, si todavía existe alguna sin instanciar
+	member(pieza(Tipo, pos(X,Y)), Ps), %para cada pieza
+	(var(X) ; var(Y)), !, %filtrando solo las que tienen alguna de sus variables no instanciadas
+	tamano(Tipo, tam(XTamAux, YTamAux)),
+	FilasMax is Filas - XTamAux + 1,
+	ColumnasMax is Columnas - YTamAux + 1,
+	between(1,FilasMax,X), %si X no está instanciada, para cada x en el tablero. Si x esta instanciada solo para la suya da true
+	between(1,ColumnasMax,Y), %igual para Y
+	quitar(pieza(Tipo, pos(X,Y)), Ps, PR), %en estas lineas, hasta el fin del for, vemos aseguramos que las piezas no se pisen
+	forall(member(PiezaCompara, PR),
+		(PiezaCompara = pieza(_,pos(XAux,YAux)),
+		 (var(XAux);var(YAux);
+			forall(pieza_ocupa(pieza(Tipo, pos(X,Y)), PosNueva),
+				(forall(pieza_ocupa(PiezaCompara, PosCompara), PosCompara \= PosNueva) )
+				)
+		 )
+		)
+	), %con esto ya no se pisan!
+	armar_tablerosD(tablero(tam(Filas, Columnas), pos(XObj, YObj), Ps)), %recursión
+	sort(Ps,Ps). %y aseguramos que esten ordenadas las piezas
